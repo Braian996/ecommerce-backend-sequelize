@@ -97,4 +97,44 @@ router.post('/products', (req, res) => {
     });
 });
 
+router.post('/purchase', (req, res) => {
+    let amountRetrieved = parseInt(req.body.amount);
+    let idProductBody = parseInt(req.body.productId);
+    let idCustomerBody = parseInt(req.body.customerId);
+
+    sequelize.query(
+        "SELECT CASE WHEN stock < :amount THEN TRUE ELSE FALSE END AS datos FROM `producto` WHERE id = :idProd",
+        {
+            replacements: {amount: amountRetrieved, idProd: idProductBody},
+            type: Sequelize.QueryTypes.SELECT
+        }
+    ).then(response => {
+        if (response.length === 0) {
+            res.send('No')
+        } else {
+            if (response[0].datos) {
+                res.send('No')
+            } else {
+                sequelize.query(
+                    "UPDATE `producto` SET stock = stock - :amount WHERE id = :idProd",
+                    {
+                        replacements: {amount: amountRetrieved, idProd: idProductBody},
+                        type: Sequelize.QueryTypes.UPDATE
+                    }
+                ).then(response2 => {
+                    if (response2.length === 0) {
+                        res.send('error')
+                    } else {
+                        Producto_Cliente.build({
+                            clienteId: idCustomerBody, productoId: idProductBody, cantidadComprados: amountRetrieved
+                        }).save().then(response3 => {
+                            res.send(response3)
+                        });
+                    }
+                });
+            }
+        }
+    })
+});
+
 module.exports = router;
