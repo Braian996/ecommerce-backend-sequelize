@@ -76,7 +76,9 @@ router.get('/productsOfCustomer', (req, res) => {
     let customerId = parseInt(req.query.customerId);
 
     sequelize.query(
-        "SELECT `producto`.`id`, `producto`.`nombre`, `producto`.`stock` FROM `producto` INNER JOIN (`producto_cliente` INNER JOIN `cliente`"+
+        "SELECT `producto`.`id`, `producto`.`nombre`, `producto`.`stock`, `producto_cliente`.`id` AS `purchaseId`"+
+        " FROM `producto`"+
+        " INNER JOIN (`producto_cliente` INNER JOIN `cliente`"+
         " ON `producto_cliente`.`clienteId` = `cliente`.`id`) ON `producto`.`id` = `producto_cliente`.`productoId`"+
         " WHERE `producto_cliente`.`clienteId` = :idCustomer",
         {
@@ -150,6 +152,18 @@ router.post('/purchase', (req, res) => {
                 });
             }
         }
+    })
+});
+
+/* DELETE */
+
+router.delete('/purchase/:purchaseId', (req, res) => {
+    let purchaseId = req.params.purchaseId;
+
+    Producto_Cliente.destroy({
+        where: {id: purchaseId}
+    }).then(response => {
+        res.send(response)
     })
 });
 
