@@ -29,4 +29,20 @@ router.get('/categories', (req, res) => {
     });
 });
 
+router.get('/customers', (req, res) => {
+    let nameCustomer = '';
+    if (String(req.query.name) !== 'undefined') {
+        nameCustomer = req.query.name;
+    }
+    Cliente.findAll({
+        where: {
+            nombre: {
+                [Op.like]: `${nameCustomer}%`
+            }
+        }
+    }).then(response => {
+        res.send(response)
+    });
+});
+
 module.exports = router;
