@@ -86,4 +86,15 @@ router.post('/customers', (req, res) => {
     });
 });
 
+router.post('/products', (req, res) => {
+    let idCategory = parseInt(req.body.categoryId);
+    let stockRetrieved = parseInt(req.body.stock);
+
+    Producto.build({
+        nombre: req.body.name, categoriaId: idCategory, stock: stockRetrieved
+    }).save().then(response => {
+        res.send(response)
+    });
+});
+
 module.exports = router;
