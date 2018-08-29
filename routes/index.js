@@ -72,4 +72,12 @@ router.get('/productByCategorieId', (req, res) => {
     })
 });
 
+/* POST */
+
+router.post('/categories', (req, res) => {
+    Categoria.build({nombre: req.body.name}).save().then(response => {
+        res.send(response)
+    });
+});
+
 module.exports = router;
