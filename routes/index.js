@@ -45,4 +45,31 @@ router.get('/customers', (req, res) => {
     });
 });
 
+router.get('/products', (req, res) => {
+    let nameProduct = '';
+    if (String(req.query.name) !== 'undefined') {
+        nameProduct = req.query.name;
+    }
+
+    Producto.findAll({
+        where: {
+            nombre: {
+                [Op.like]: `${nameProduct}%`
+            }
+        }
+    }).then(response => {
+        res.send(response)
+    })
+});
+
+router.get('/productByCategorieId', (req, res) => {
+    Producto.findAll({
+        where: {
+            categoriaId: req.query.categoryId
+        }
+    }).then(response => {
+        res.send(response)
+    })
+});
+
 module.exports = router;
