@@ -22,9 +22,11 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Express' });
+/* GET */
+router.get('/categories', (req, res) => {
+    Categoria.findAll().then(response => {
+        res.send(response)
+    });
 });
 
 module.exports = router;
