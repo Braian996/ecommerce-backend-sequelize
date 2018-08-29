@@ -80,4 +80,10 @@ router.post('/categories', (req, res) => {
     });
 });
 
+router.post('/customers', (req, res) => {
+    Cliente.build({nombre: req.body.name}).save().then(response => {
+        res.send(response)
+    });
+});
+
 module.exports = router;
