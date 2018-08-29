@@ -72,6 +72,22 @@ router.get('/productByCategorieId', (req, res) => {
     })
 });
 
+router.get('/productsOfCustomer', (req, res) => {
+    let customerId = parseInt(req.query.customerId);
+
+    sequelize.query(
+        "SELECT `producto`.`id`, `producto`.`nombre`, `producto`.`stock` FROM `producto` INNER JOIN (`producto_cliente` INNER JOIN `cliente`"+
+        " ON `producto_cliente`.`clienteId` = `cliente`.`id`) ON `producto`.`id` = `producto_cliente`.`productoId`"+
+        " WHERE `producto_cliente`.`clienteId` = :idCustomer",
+        {
+            replacements: {idCustomer: customerId},
+            type: Sequelize.QueryTypes.SELECT
+        }
+    ).then(response => {
+        res.send(response)
+    })
+});
+
 /* POST */
 
 router.post('/categories', (req, res) => {
