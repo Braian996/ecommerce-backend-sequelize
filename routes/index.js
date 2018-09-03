@@ -157,13 +157,34 @@ router.post('/purchase', (req, res) => {
 
 /* DELETE */
 
-router.delete('/purchase/:purchaseId', (req, res) => {
-    let purchaseId = req.params.purchaseId;
+router.delete('/purchase', (req, res, next) => {
+    let purchaseId = parseInt(req.query.purchaseId);
+    let customerId = parseInt(req.query.customerId);
 
-    Producto_Cliente.destroy({
-        where: {id: purchaseId}
-    }).then(response => {
-        res.send(response)
+    sequelize.query(
+        "DELETE FROM `producto_cliente` WHERE `id` = :idPC",
+        {
+            replacements: {idPC: purchaseId},
+            type: Sequelize.QueryTypes.DELETE
+        }
+    ).then(() => {
+        sequelize.query(
+            "SELECT `producto`.`id`, `producto`.`nombre`, `producto`.`stock`, `producto_cliente`.`id` AS `purchaseId`"+
+            " FROM `producto`"+
+            " INNER JOIN (`producto_cliente` INNER JOIN `cliente`"+
+            " ON `producto_cliente`.`clienteId` = `cliente`.`id`) ON `producto`.`id` = `producto_cliente`.`productoId`"+
+            " WHERE `producto_cliente`.`clienteId` = :idCustomer",
+            {
+                replacements: {idCustomer: customerId},
+                type: Sequelize.QueryTypes.SELECT
+            }
+        ).then(response => {
+            res.send(response)
+        }).catch(err2 => {
+            res.send(err2)
+        })
+    }).catch(err => {
+        res.send(err)
     })
 });
 
