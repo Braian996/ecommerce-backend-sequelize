@@ -62,6 +62,23 @@ router.get('/products', (req, res) => {
     })
 });
 
+router.get('/productsById/:productId', (req, res) => {
+    let productId = parseInt(req.params.productId);
+
+    sequelize.query(
+        "SELECT `producto`.`id`, `producto`.`nombre`, `producto`.`categoriaId`, `producto`.`stock`, "+
+        "`categoria`.`nombre` AS categoryName from `producto` INNER JOIN `categoria` "+
+        "ON `producto`.`categoriaId` = `categoria`.`id` "+
+        "WHERE `producto`.`id` = :prodId",
+        {
+            replacements: {prodId: productId},
+            type: Sequelize.QueryTypes.SELECT
+        }
+    ).then(response => {
+        res.send(response)
+    })
+});
+
 router.get('/productByCategorieId', (req, res) => {
     Producto.findAll({
         where: {
