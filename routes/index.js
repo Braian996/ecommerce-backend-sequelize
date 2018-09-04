@@ -205,4 +205,25 @@ router.delete('/purchase', (req, res, next) => {
     })
 });
 
+/* PUT */
+
+router.put('/products/:productId', (req, res) => {
+    let productId = parseInt(req.params.productId);
+    let name = req.body.name;
+    let categoryId = parseInt(req.body.categoryId);
+    let stock = parseInt(req.body.stock);
+
+    sequelize.query(
+        "UPDATE `producto` SET nombre = :name, categoriaId = :categoryId , stock = :stock WHERE id = :idProd",
+        {
+            replacements: {name, categoryId, stock, idProd: productId},
+            type: Sequelize.QueryTypes.UPDATE
+        }
+    ).then(() => {
+        res.send({});
+    }).catch(err => {
+        res.send(err)
+    })
+});
+
 module.exports = router;
