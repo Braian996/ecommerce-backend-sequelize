@@ -212,15 +212,13 @@ router.put('/products/:productId', (req, res) => {
     let name = req.body.name;
     let categoryId = parseInt(req.body.categoryId);
     let stock = parseInt(req.body.stock);
-
-    sequelize.query(
-        "UPDATE `producto` SET nombre = :name, categoriaId = :categoryId , stock = :stock WHERE id = :idProd",
-        {
-            replacements: {name, categoryId, stock, idProd: productId},
-            type: Sequelize.QueryTypes.UPDATE
+    Producto.update({ nombre: name, categoriaId: categoryId, stock: stock }, {
+        where: {
+            id: productId
         }
-    ).then(() => {
-        res.send({});
+    }).then((response) => {
+        console.log(response)
+        res.send({response});
     }).catch(err => {
         res.send(err)
     })
