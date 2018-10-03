@@ -45,6 +45,17 @@ router.get('/customers', (req, res) => {
     });
 });
 
+router.get('/customerById/:customerId', (req, res) => {
+    let id = parseInt(req.params.customerId)
+    Cliente.findOne({
+        where: {
+            id: id
+        }
+    }).then(response => {
+        res.send(response)
+    })
+});
+
 router.get('/products', (req, res) => {
     let nameProduct = '';
     if (String(req.query.name) !== 'undefined') {
@@ -217,11 +228,22 @@ router.put('/products/:productId', (req, res) => {
             id: productId
         }
     }).then((response) => {
-        console.log(response)
         res.send({response});
     }).catch(err => {
         res.send(err)
     })
+});
+
+router.put('/customers/:customerId', (req, res) => {
+    let customerId = parseInt(req.params.customerId)
+    let name = req.body.name;
+    Cliente.update({ nombre: name }, {where: { id: customerId }})
+        .then(response => {
+            res.send({response})
+        })
+        .catch(err => {
+            res.send(err)
+        })
 });
 
 module.exports = router;
