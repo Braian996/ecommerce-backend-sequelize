@@ -6,3 +6,5 @@ yarn-error.log*
 bower_components
 node_modules/
 jspm_packages/
+.vscode
+.idea/*
